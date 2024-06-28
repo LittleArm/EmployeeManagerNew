@@ -1,7 +1,8 @@
 package com.example.employeemanager.user;
 
 import jakarta.persistence.*;
-import lombok.*;;import java.time.LocalDateTime;
+import lombok.*;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter

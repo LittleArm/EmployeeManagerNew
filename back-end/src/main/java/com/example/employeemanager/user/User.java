@@ -38,7 +38,6 @@ public class User implements UserDetails, Principal, Serializable {
     private String imageUrl;
     @Column(unique = true)
     private String email;
-    @Column(nullable = false, updatable = false)
     private String employeeCode;
     private String password;
     private Boolean locked;
@@ -98,7 +97,7 @@ public class User implements UserDetails, Principal, Serializable {
         return enabled;
     }
 
-    private String fullName() {
+    public String getFullName() {
         return firstName + " " + lastName;
     }
 }

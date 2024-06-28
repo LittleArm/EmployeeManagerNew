@@ -1,6 +1,7 @@
 package com.example.employeemanager.user;
 
 import com.example.employeemanager.role.Role;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -43,7 +44,7 @@ public class User implements UserDetails, Principal, Serializable {
     private Boolean locked;
     private Boolean enabled;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Role> roles;
 
     @CreatedDate
@@ -60,6 +61,7 @@ public class User implements UserDetails, Principal, Serializable {
     }
 
     @Override
+    @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.roles
                 .stream()

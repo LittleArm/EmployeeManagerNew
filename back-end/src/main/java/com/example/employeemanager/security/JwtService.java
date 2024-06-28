@@ -17,19 +17,18 @@ import java.util.function.Function;
 
 @Service
 public class JwtService {
-
-    @Value("${application.security.jwt.expiration}")
-    private long jwtExpiration;
     @Value("${application.security.jwt.secret-key}")
     private String secretKey;
+    @Value("${application.security.jwt.expiration}")
+    private long jwtExpiration;
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
-    public <T> T extractClaim(String token, Function<Claims, T> claimResolver) {
-         final Claims claims = extractAllClaims(token);
-         return claimResolver.apply(claims);
+    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+        final Claims claims = extractAllClaims(token);
+        return claimsResolver.apply(claims);
     }
 
     public String generateToken(UserDetails userDetails) {
@@ -37,35 +36,33 @@ public class JwtService {
     }
 
     public String generateToken(
-            Map<String, Object> claims,
+            Map<String, Object> extraClaims,
             UserDetails userDetails
     ) {
-
-        return buildToken(claims, userDetails, jwtExpiration);
+        return buildToken(extraClaims, userDetails, jwtExpiration);
     }
 
     private String buildToken(
-            Map<String, Object> extraclaims,
+            Map<String, Object> extraClaims,
             UserDetails userDetails,
-            long jwtExpiration
+            long expiration
     ) {
         var authorities = userDetails.getAuthorities()
-                .stream()
-                .map(GrantedAuthority::getAuthority)
+                .stream().
+                map(GrantedAuthority::getAuthority)
                 .toList();
         return Jwts
                 .builder()
-                .setClaims(extraclaims)
+                .setClaims(extraClaims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
+                .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .claim("authorities", authorities)
                 .signWith(getSignInKey())
-                .compact()
-                ;
+                .compact();
     }
 
-    public Boolean isTokenValid(String token, UserDetails userDetails) {
+    public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
     }
@@ -86,7 +83,7 @@ public class JwtService {
                 .parseClaimsJws(token)
                 .getBody();
     }
-    
+
     private Key getSignInKey() {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);

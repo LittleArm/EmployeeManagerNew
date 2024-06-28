@@ -22,11 +22,6 @@ public class ManageService {
         this.tokenRepository = tokenRepository;
     }
 
-    public User addEmployee(User user) {
-        user.setEmployeeCode(UUID.randomUUID().toString());
-        return userRepository.save(user);
-    }
-
     public List<User> findAllEmployees() {
         return userRepository.findAll();
     }

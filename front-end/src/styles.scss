@@ -1,3 +1,19 @@
 /* You can add global styles to this file, and also import other style files */
 @import "bootstrap/dist/css/bootstrap.min.css";
 @import "@fortawesome/fontawesome-free/css/all.min.css";
+
+body {
+    background-image: url('https://images.unsplash.com/photo-1557683316-973673baf926');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+}
+.login-container {
+    width: 500px !important;
+    margin-top: 9%;
+}
+
+.login-container h3 {
+    margin-top: 15px;
+}

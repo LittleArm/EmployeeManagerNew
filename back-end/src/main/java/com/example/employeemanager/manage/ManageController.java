@@ -1,6 +1,7 @@
 package com.example.employeemanager.manage;
 
 import com.example.employeemanager.user.User;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -9,6 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("employee")
+@Tag(name = "EmployeeManagement")
 public class ManageController {
     private final ManageService manageService;
 

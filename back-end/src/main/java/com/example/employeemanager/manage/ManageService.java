@@ -27,7 +27,13 @@ public class ManageService {
     }
 
     public User updateEmployee(User user) {
-        return userRepository.save(user);
+        User user1 = findEmployee(user.getEmail());
+        user1.setFirstName(user.getFirstName());
+        user1.setLastName(user.getLastName());
+        user1.setDateOfBirth(user.getDateOfBirth());
+        user1.setJobTitle(user.getJobTitle());
+        user1.setImageUrl(user.getImageUrl());
+        return userRepository.save(user1);
     }
 
     public User findEmployee(String email) {

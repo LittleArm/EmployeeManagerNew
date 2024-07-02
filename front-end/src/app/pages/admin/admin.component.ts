@@ -5,6 +5,7 @@ import { User } from '../../services/models/user';
 import { EmployeeManagementService } from '../../services/services';
 import { AuthenticationService } from '../../services/services';
 import { RegistrationRequest } from '../../services/models';
+import { NgForm } from '@angular/forms';
 
 @Component({
   selector: 'app-admin',
@@ -58,7 +59,9 @@ export class AdminComponent {
     reader.readAsText(blob);
   }
 
-  public onAddEmployee(): void {
+  public onAddEmployee(addForm: NgForm): void {
+    document.getElementById('add-employee-form')?.click();
+    this.registrationRequest = addForm.value;
     this.authService.register({
       body: this.registrationRequest
     }).subscribe({

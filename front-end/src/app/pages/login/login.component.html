@@ -5,8 +5,8 @@
       <p *ngFor="let message of errorMessage">{{message}}</p>
   </div>
   <div class="mb-3">
-    <label for="login" class="form-label">Email address</label>
-    <input [(ngModel)]="authRequest.email" type="email" class="form-control" id="login" placeholder="name@example.com">
+    <label for="login" class="form-label">Email Address</label>
+    <input [(ngModel)]="authRequest.email" type="email" class="form-control" id="login" placeholder="Your email">
   </div>
   <div class="mb-3">
     <label for="password" class="form-label">Password</label>
@@ -19,7 +19,7 @@
     <div>
       Don't have an account?&nbsp;
       <button (click)="register()" type="button" class="btn btn-link">
-        Register
+        Sign up
       </button>
     </div>
   </div>

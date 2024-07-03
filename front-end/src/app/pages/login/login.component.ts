@@ -5,7 +5,6 @@ import { AuthenticationRequest } from '../../services/models';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TokenService } from '../../services/token/token.service';
-import { EmployeeManagementService } from '../../services/services';
 
 @Component({
   selector: 'app-login',
@@ -24,7 +23,6 @@ export class LoginComponent {
       private router: Router,
       private authService: AuthenticationService,
       private tokenService: TokenService,
-      private employeeManagementService: EmployeeManagementService
     ) {}
 
     login() {
@@ -71,48 +69,17 @@ export class LoginComponent {
     private handleSuccessResponse(res: any): void {
       if (res.token) {
         this.tokenService.token = res.token as string;
-        this.checkUserRole(this.authRequest.email);
+        const base64Url = res.token.split('.')[1];
+        const base64 = base64Url.replace('-', '+').replace('_', '/');
+        const tokenPayload = JSON.parse(window.atob(base64));
+        if (tokenPayload.authorities.includes('ADMIN')) {
+          this.router.navigate(['/admin']);
+        } else {
+          this.router.navigate(['/user']);
+        }
       } else {
         this.errorMessage.push('No token found in the response.');
       }
-    }
-
-    private checkUserRole(email: string): void {
-      this.employeeManagementService.getEmployeeByEmail({
-        email
-      }).subscribe({
-        next: (res) => {
-          if (res instanceof Blob) {
-            this.parseUserBlobResponse(res);
-          } 
-        },
-        error: (err) => {
-          console.error('Error getting user role:', err);
-          this.errorMessage.push('An error occurred while getting user role.');
-        }
-      });
-    }
-
-    private parseUserBlobResponse(blob: Blob): void {
-      const reader = new FileReader();
-      reader.onload = () => {
-        try {
-          const res = JSON.parse(reader.result as string);
-          if (res.roles[0].name == 'ADMIN') {
-            this.router.navigate(['/admin']);
-          } else {
-            this.router.navigate(['/employee']);
-          } 
-        } catch (e) {
-          console.error('Error parsing user blob response:', e);
-          this.errorMessage.push('An error occurred while processing the user response.');
-        }
-      };
-      reader.onerror = () => {
-        console.error('Error reading blob:', reader.error);
-        this.errorMessage.push('An error occurred while reading the user response.');
-      };
-      reader.readAsText(blob);
     }
 
     private parseBlobError(blob: Blob): void {

@@ -67,29 +67,6 @@ public class GlobalExceptionHandler {
                 );
     }
 
-//    @ExceptionHandler(ActivationTokenException.class)
-//    public ResponseEntity<ExceptionResponse> handleException(ActivationTokenException exception) {
-//        return ResponseEntity
-//                .status(BAD_REQUEST)
-//                .body(
-//                        ExceptionResponse.builder()
-//                                .error(exception.getMessage())
-//                                .build()
-//                );
-//    }
-//
-//    @ExceptionHandler(OperationNotPermittedException.class)
-//    public ResponseEntity<ExceptionResponse> handleException(OperationNotPermittedException exception) {
-//        return ResponseEntity
-//                .status(BAD_REQUEST)
-//                .body(
-//                        ExceptionResponse.builder()
-//                                .error(exception.getMessage())
-//                                .build()
-//                );
-//    }
-
-
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ExceptionResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
         Set<String> errors = new HashSet<>();

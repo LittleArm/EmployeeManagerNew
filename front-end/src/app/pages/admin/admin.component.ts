@@ -6,6 +6,7 @@ import { EmployeeManagementService } from '../../services/services';
 import { AuthenticationService } from '../../services/services';
 import { RegistrationRequest } from '../../services/models';
 import { NgForm } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-admin',
@@ -20,14 +21,33 @@ export class AdminComponent {
   deleteEmployee!: User;
   registrationRequest: RegistrationRequest = { email: '', firstname: '', lastname: '', password: '' };
   errorMessage: Array<string> = [];
+  currentPage = 1;
+  itemsPerPage = 8;
 
   constructor(
+    private router: Router,
     private employeeManagementService: EmployeeManagementService,
     private authService: AuthenticationService
   ) {}
 
   ngOnInit() {
     this.getAllEmployees();
+  }
+
+  get paginatedEmployees() {
+    const start = (this.currentPage - 1) * this.itemsPerPage;
+    const end = start + this.itemsPerPage;
+    return this.employees.slice(start, end);
+  }
+
+  totalPages() {
+    return Math.ceil(this.employees.length / this.itemsPerPage);
+  }
+
+  changePage(page: number) {
+    if (page > 0 && page <= this.totalPages()) {
+      this.currentPage = page;
+    }
   }
 
   public getAllEmployees(): void {
@@ -60,13 +80,14 @@ export class AdminComponent {
   }
 
   public onAddEmployee(addForm: NgForm): void {
-    document.getElementById('add-employee-form')?.click();
     this.registrationRequest = addForm.value;
     this.authService.register({
       body: this.registrationRequest
     }).subscribe({
       next: () => {
         this.getAllEmployees();
+        document.getElementById('add-employee-form')?.click();
+        this.errorMessage = [];
       },
       error: (err) => {
         if (err.error instanceof Blob) {
@@ -164,5 +185,10 @@ export class AdminComponent {
     } else {
       this.errorMessage.push('An unknown error occurred.');
     }
+  }
+
+  logout() {
+    localStorage.removeItem('token');
+    this.router.navigate(['/login']);
   }
 }

@@ -319,6 +319,7 @@
             "type": "string"
           },
           "email": {
+            "pattern": ".+@.+\\..+",
             "type": "string"
           },
           "password": {
@@ -336,6 +337,7 @@
         "type": "object",
         "properties": {
           "email": {
+            "pattern": ".+@.+\\..+",
             "type": "string"
           },
           "password": {

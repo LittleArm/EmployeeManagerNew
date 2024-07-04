@@ -41,7 +41,7 @@ application:
 server:
   port: 8088
 
-    #    host: localhost
+#    host: localhost
 #    port: 1025
 #    username: postgres
 #    password: 15102003

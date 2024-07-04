@@ -1,8 +1,8 @@
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/employeemanager
-    username: postgres
-    password: 15102003
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -14,17 +14,32 @@ spring:
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
   mail:
-    host: smtp.gmail.com
-    port: 587
-    username: hienlequang47@gmail.com
-    password: uwsa ftcd ffvs dtxv
+#    host: smtp.gmail.com
+#    port: 587
+#    username: ${MAIL_USERNAME}
+#    password: ${MAIL_PASSWORD}
+#    properties:
+#      mail:
+#        smtp:
+#          auth: true
+#          starttls:
+#            enable: true
+#          ssl.trust: smtp.gmail.com
+#        connectiontimeout: 5000
+#        timeout: 3000
+#        writetimeout: 5000
+
+    host: localhost
+    port: 1025
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
     properties:
       mail:
         smtp:
-          auth: true
-          starttls:
-            enable: true
-          ssl.trust: smtp.gmail.com
+          trust: "*"
+        auth: true
+        starttls:
+          enable: true
         connectiontimeout: 5000
         timeout: 3000
         writetimeout: 5000
@@ -32,7 +47,7 @@ spring:
 application:
   security:
     jwt:
-      secret-key: BJRZ3KYSPM7GVC8QD9U2ETAAATGSSASDWYSPM7GVC8QD9U2
+      secret-key: ${JWT_SECRET_KEY}
       expiration: 86400000
   mailing:
     frontend:
@@ -41,19 +56,6 @@ application:
 server:
   port: 8088
 
-#    host: localhost
-#    port: 1025
-#    username: postgres
-#    password: 15102003
-#    properties:
-#      mail:
-#        smtp:
-#          trust: "*"
-#        auth: true
-#        starttls:
-#          enable: true
-#        connectiontimeout: 5000
-#        timeout: 3000
-#        writetimeout: 5000
+
 
 

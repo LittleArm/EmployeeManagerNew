@@ -91,7 +91,7 @@ public class GlobalExceptionHandler {
                 .status(INTERNAL_SERVER_ERROR)
                 .body(
                         ExceptionResponse.builder()
-                                .errorDescription("Internal error, please contact the admin")
+                                .errorDescription("Email already exists")
                                 .error(exception.getMessage())
                                 .build()
                 );

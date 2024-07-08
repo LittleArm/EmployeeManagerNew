@@ -3,6 +3,7 @@ package com.example.employeemanager.auth;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("auth")
 @RequiredArgsConstructor
-@Tag(name = "AuthenticationService")
+@Tag(name = "Authentication")
 public class AuthenticationController {
 
     private final AuthenticationService service;
@@ -42,16 +43,16 @@ public class AuthenticationController {
     @PostMapping("/resetPassword")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public ResponseEntity<?> resetPassword(
-            @RequestBody @Valid ResetPasswordRequest request
+            @RequestParam String email
     ) throws MessagingException {
-        service.resetPassword(request);
+        service.resetPassword(email);
         return ResponseEntity.accepted().build();
     }
 
     @PostMapping("/save-password")
     public void savePassword(
-            @RequestBody @Valid ResetPasswordRequest request,
-            @RequestParam String token
+            @RequestParam String token,
+            @RequestBody @Valid ResetPasswordRequest request
     ) throws MessagingException {
         service.savePassword(token, request);
     }

@@ -4,22 +4,24 @@ import com.example.employeemanager.user.TokenRepository;
 import com.example.employeemanager.user.User;
 import com.example.employeemanager.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @Transactional
 public class ManageService {
     private final UserRepository userRepository;
     private final TokenRepository tokenRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public ManageService(UserRepository userRepository, TokenRepository tokenRepository) {
+    public ManageService(UserRepository userRepository, TokenRepository tokenRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.tokenRepository = tokenRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public List<User> findAllEmployees() {
@@ -27,13 +29,13 @@ public class ManageService {
     }
 
     public User updateEmployee(User user) {
-        User user1 = findEmployee(user.getEmail());
-        user1.setFirstName(user.getFirstName());
-        user1.setLastName(user.getLastName());
-        user1.setDateOfBirth(user.getDateOfBirth());
-        user1.setJobTitle(user.getJobTitle());
-        user1.setImageUrl(user.getImageUrl());
-        return userRepository.save(user1);
+        User employee = findEmployee(user.getEmail());
+        employee.setFirstName(user.getFirstName());
+        employee.setLastName(user.getLastName());
+        employee.setDateOfBirth(user.getDateOfBirth());
+        employee.setJobTitle(user.getJobTitle());
+        employee.setImageUrl(user.getImageUrl());
+        return userRepository.save(employee);
     }
 
     public User findEmployee(String email) {
@@ -50,5 +52,18 @@ public class ManageService {
         userRepository.save(user);
         tokenRepository.deleteByUserId(id);
         userRepository.deleteUserById(id);
+    }
+
+    public User updatePassword(User user, String oldPassword, String newPassword) {
+        User employee = findEmployee(user.getEmail());
+        if (!checkIfValidOldPassword(employee, oldPassword)) {
+            throw new IllegalStateException("Old password is incorrect");
+        }
+        employee.setPassword(passwordEncoder.encode(newPassword));
+        return userRepository.save(employee);
+    }
+
+    private boolean checkIfValidOldPassword(User user, String oldPassword) {
+        return passwordEncoder.matches(oldPassword, user.getPassword());
     }
 }

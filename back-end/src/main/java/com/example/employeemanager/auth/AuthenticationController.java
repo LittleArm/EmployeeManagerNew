@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("auth")
 @RequiredArgsConstructor
-@Tag(name = "Authentication")
+@Tag(name = "AuthenticationService")
 public class AuthenticationController {
 
     private final AuthenticationService service;
@@ -37,5 +37,22 @@ public class AuthenticationController {
             @RequestParam String token
     ) throws MessagingException {
         service.activateAccount(token);
+    }
+
+    @PostMapping("/resetPassword")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public ResponseEntity<?> resetPassword(
+            @RequestBody @Valid ResetPasswordRequest request
+    ) throws MessagingException {
+        service.resetPassword(request);
+        return ResponseEntity.accepted().build();
+    }
+
+    @PostMapping("/save-password")
+    public void savePassword(
+            @RequestBody @Valid ResetPasswordRequest request,
+            @RequestParam String token
+    ) throws MessagingException {
+        service.savePassword(token, request);
     }
 }

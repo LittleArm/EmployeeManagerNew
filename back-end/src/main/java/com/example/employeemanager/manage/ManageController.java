@@ -2,6 +2,7 @@ package com.example.employeemanager.manage;
 
 import com.example.employeemanager.user.User;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,7 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("employee")
-@Tag(name = "EmployeeManagement")
+@Tag(name = "EmployeeService")
 public class ManageController {
     private final ManageService manageService;
 
@@ -33,6 +34,16 @@ public class ManageController {
     @PutMapping("/update")
     public ResponseEntity<User> updateEmployee(@RequestBody User employee) {
         User updateEmployee = manageService.updateEmployee(employee);
+        return new ResponseEntity<>(updateEmployee, HttpStatus.OK);
+    }
+
+    @PutMapping("/updatePassword")
+    public ResponseEntity<User> updatePassword(
+            @RequestBody User employee,
+            @RequestParam String oldPassword,
+            @RequestParam String newPassword
+    ) {
+        User updateEmployee = manageService.updatePassword(employee, oldPassword, newPassword);
         return new ResponseEntity<>(updateEmployee, HttpStatus.OK);
     }
 

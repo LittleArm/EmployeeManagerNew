@@ -36,10 +36,11 @@ public class AuthenticationService {
     private final JwtService jwtService;
     @Value("${application.mailing.frontend.activation-url}")
     private String activationUrl;
+    @Value("@{application.mailing.frontend.resetPassword-url}")
+    private String resetUrl;
 
     public void register(RegistrationRequest request) throws MessagingException {
         var userRole = roleRepository.findByName("USER")
-                // todo - better exception handling
                 .orElseThrow(() -> new IllegalStateException("ROLE USER was not initiated"));
         var user = User.builder()
                 .firstName(request.getFirstname())
@@ -72,8 +73,8 @@ public class AuthenticationService {
         tokenRepository.save(savedToken);
     }
 
+    @Transactional
     private String generateAndSaveActivationToken(User user) {
-        // Generate a token
         String generatedToken = generateActivationCode(6);
         var token = Token.builder()
                 .token(generatedToken)
@@ -82,7 +83,6 @@ public class AuthenticationService {
                 .user(user)
                 .build();
         tokenRepository.save(token);
-
         return generatedToken;
     }
 
@@ -125,5 +125,41 @@ public class AuthenticationService {
         claims.put("fullname", user.getFullName());
         var jwtToken = jwtService.generateToken(claims, user);
         return AuthenticationResponse.builder().token(jwtToken).build();
+    }
+
+    public void resetPassword(ResetPasswordRequest request) throws MessagingException {
+        var user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        sendResetPasswordEmail(user);
+    }
+
+    private void sendResetPasswordEmail(User user) throws MessagingException {
+        var newToken = generateAndSaveActivationToken(user);
+        emailService.sendEmail(
+                user.getEmail(),
+                user.getFullName(),
+                EmailTemplateName.RESET_PASSWORD,
+                resetUrl,
+                newToken,
+                "Password reset"
+        );
+    }
+
+    @Transactional
+    public void savePassword(String token, ResetPasswordRequest request) throws MessagingException {
+        Token savedToken = tokenRepository.findByToken(token)
+                .orElseThrow(() -> new RuntimeException("Invalid token"));
+        if (LocalDateTime.now().isAfter(savedToken.getExpiresAt())) {
+            throw new RuntimeException("Verification token has expired. Please try to reset your password again!");
+        }
+
+        var user = userRepository.findById(savedToken.getUser().getId())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
+
+        savedToken.setValidatedAt(LocalDateTime.now());
+        tokenRepository.save(savedToken);
     }
 }

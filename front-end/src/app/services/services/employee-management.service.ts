@@ -17,6 +17,8 @@ import { getEmployeeByEmail } from '../fn/employee-management/get-employee-by-em
 import { GetEmployeeByEmail$Params } from '../fn/employee-management/get-employee-by-email';
 import { updateEmployee } from '../fn/employee-management/update-employee';
 import { UpdateEmployee$Params } from '../fn/employee-management/update-employee';
+import { updatePassword } from '../fn/employee-management/update-password';
+import { UpdatePassword$Params } from '../fn/employee-management/update-password';
 import { User } from '../models/user';
 
 @Injectable({ providedIn: 'root' })
@@ -46,6 +48,31 @@ export class EmployeeManagementService extends BaseService {
    */
   updateEmployee(params: UpdateEmployee$Params, context?: HttpContext): Observable<User> {
     return this.updateEmployee$Response(params, context).pipe(
+      map((r: StrictHttpResponse<User>): User => r.body)
+    );
+  }
+
+  /** Path part for operation `updatePassword()` */
+  static readonly UpdatePasswordPath = '/employee/updatePassword';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `updatePassword()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  updatePassword$Response(params: UpdatePassword$Params, context?: HttpContext): Observable<StrictHttpResponse<User>> {
+    return updatePassword(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `updatePassword$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  updatePassword(params: UpdatePassword$Params, context?: HttpContext): Observable<User> {
+    return this.updatePassword$Response(params, context).pipe(
       map((r: StrictHttpResponse<User>): User => r.body)
     );
   }

@@ -36,7 +36,8 @@ public class AuthenticationService {
     private final JwtService jwtService;
     @Value("${application.mailing.frontend.activation-url}")
     private String activationUrl;
-    @Value("@{application.mailing.frontend.resetPassword-url}")
+
+    @Value("${application.mailing.frontend.resetPassword-url}")
     private String resetUrl;
 
     public void register(RegistrationRequest request) throws MessagingException {
@@ -127,8 +128,8 @@ public class AuthenticationService {
         return AuthenticationResponse.builder().token(jwtToken).build();
     }
 
-    public void resetPassword(ResetPasswordRequest request) throws MessagingException {
-        var user = userRepository.findByEmail(request.getEmail())
+    public void resetPassword(String email) throws MessagingException {
+        var user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         sendResetPasswordEmail(user);
     }
@@ -139,7 +140,7 @@ public class AuthenticationService {
                 user.getEmail(),
                 user.getFullName(),
                 EmailTemplateName.RESET_PASSWORD,
-                resetUrl,
+                resetUrl + "?token=" + newToken,
                 newToken,
                 "Password reset"
         );
@@ -149,12 +150,17 @@ public class AuthenticationService {
     public void savePassword(String token, ResetPasswordRequest request) throws MessagingException {
         Token savedToken = tokenRepository.findByToken(token)
                 .orElseThrow(() -> new RuntimeException("Invalid token"));
+
         if (LocalDateTime.now().isAfter(savedToken.getExpiresAt())) {
             throw new RuntimeException("Verification token has expired. Please try to reset your password again!");
         }
 
         var user = userRepository.findById(savedToken.getUser().getId())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        if (!request.getNewPassword().equals(request.getConfirmPassword())) {
+            throw new RuntimeException("Passwords do not match");
+        }
 
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         userRepository.save(user);

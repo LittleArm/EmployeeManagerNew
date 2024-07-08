@@ -9,14 +9,12 @@ import lombok.Setter;
 @Setter
 @Builder
 public class ResetPasswordRequest {
-    @Email(message = "Email is not well formatted")
-    @NotEmpty(message = "Email is mandatory")
-    @NotNull(message = "Email is mandatory")
-    @Pattern(regexp = ".+@.+\\..+", message = "Email must be well formatted and contain a domain")
-    private String email;
-
     @NotEmpty(message = "Password is mandatory")
     @NotNull(message = "Password is mandatory")
     @Size(min = 8, message = "Password must be 8 characters long minimum")
     private String newPassword;
+
+    @NotEmpty(message = "Confirmation password is mandatory")
+    @NotNull(message = "Confirmation password is mandatory")
+    private String confirmPassword;
 }

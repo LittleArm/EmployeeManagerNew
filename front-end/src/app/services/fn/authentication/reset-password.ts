@@ -6,17 +6,16 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { ResetPasswordRequest } from '../../models/reset-password-request';
 
 export interface ResetPassword$Params {
-      body: ResetPasswordRequest
+  email: string;
 }
 
 export function resetPassword(http: HttpClient, rootUrl: string, params: ResetPassword$Params, context?: HttpContext): Observable<StrictHttpResponse<{
 }>> {
   const rb = new RequestBuilder(rootUrl, resetPassword.PATH, 'post');
   if (params) {
-    rb.body(params.body, 'application/json');
+    rb.query('email', params.email, {});
   }
 
   return http.request(

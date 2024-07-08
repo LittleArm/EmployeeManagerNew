@@ -1,6 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
 export interface ResetPasswordRequest {
-  email: string;
+  confirmPassword: string;
   newPassword: string;
 }

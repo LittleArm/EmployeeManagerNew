@@ -11,7 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("employee")
-@Tag(name = "EmployeeService")
+@Tag(name = "EmployeeManagement")
 public class ManageController {
     private final ManageService manageService;
 

@@ -5,6 +5,8 @@ import { RegisterComponent } from './pages/register/register.component';
 import { ActivateAccountComponent } from './pages/activate-account/activate-account.component';
 import { AdminComponent } from './pages/admin/admin.component';
 import { UserComponent } from './pages/user/user.component';
+import { ForgetPassComponent } from './pages/forget-pass/forget-pass.component';
+import { ResetPasswordComponent } from './pages/reset-password/reset-password.component';
 
 
 export const routes: Routes = [
@@ -27,6 +29,14 @@ export const routes: Routes = [
     {
         path: 'user',
         component: UserComponent
+    },
+    {
+        path: 'forget-pass',
+        component: ForgetPassComponent
+    },
+    {
+        path: 'reset-password',
+        component: ResetPasswordComponent
     }
 ];
 

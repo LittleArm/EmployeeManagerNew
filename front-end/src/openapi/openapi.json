@@ -128,16 +128,16 @@
           "Authentication"
         ],
         "operationId": "resetPassword",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ResetPasswordRequest"
-              }
+        "parameters": [
+          {
+            "name": "email",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
             }
-          },
-          "required": true
-        },
+          }
+        ],
         "responses": {
           "202": {
             "description": "Accepted",
@@ -400,34 +400,33 @@
           "fullName": {
             "type": "string"
           },
-          "accountNonExpired": {
+          "username": {
+            "type": "string"
+          },
+          "accountNonLocked": {
             "type": "boolean"
           },
           "credentialsNonExpired": {
             "type": "boolean"
           },
-          "username": {
-            "type": "string"
-          },
-          "accountNonLocked": {
+          "accountNonExpired": {
             "type": "boolean"
           }
         }
       },
       "ResetPasswordRequest": {
         "required": [
-          "email",
+          "confirmPassword",
           "newPassword"
         ],
         "type": "object",
         "properties": {
-          "email": {
-            "pattern": ".+@.+\\..+",
-            "type": "string"
-          },
           "newPassword": {
             "maxLength": 2147483647,
             "minLength": 8,
+            "type": "string"
+          },
+          "confirmPassword": {
             "type": "string"
           }
         }
